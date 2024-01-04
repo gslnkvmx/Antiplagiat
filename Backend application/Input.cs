@@ -75,5 +75,29 @@ namespace Antiplagiat
                 }
             }
         }
+
+        
+        /// <summary>
+        /// Данный метод спрашивает спрашивает у пользователя текст для антиплагиата 
+        /// </summary>
+        /// <param name="choice"></param>
+        /// <returns></returns>
+        public string GetCurrentText(int choice)
+        {
+            switch (choice)
+            {
+                case 1:
+                    Console.WriteLine("Введите текст в консоль");
+                    var text1 = Console.ReadLine();
+                    return text1;
+                case 2:
+                    Console.WriteLine("Введите путь до файла на вашем компьютере");
+                    var pathToFile = Console.ReadLine();
+                    var text2 = File.ReadAllText(pathToFile , Encoding.GetEncoding(1251)); // данное исключение с null мы перехватим выше
+                    return text2;
+            }
+
+            return null;
+        }
     }
 }
