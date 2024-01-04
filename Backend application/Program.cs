@@ -1,10 +1,12 @@
-﻿namespace Backend_application
+﻿using AntiplagiatLib;
+
+namespace Backend_application
 {
     internal class Program
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            TFIDF.AddToRefDocs(@"C:\Users\maxgu\Downloads\tot.txt");
         }
     }
 }
