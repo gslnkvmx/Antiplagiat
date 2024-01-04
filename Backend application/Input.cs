@@ -40,5 +40,40 @@ namespace Antiplagiat
                 }
             }
         }
+
+
+         /// <summary>
+        /// Данный метод спрашивает у пользователя как он хочет ввести текст в антиплагиат
+        /// </summary>
+        /// <param name="choice">В данную переменную мы запишем выбор пользователя</param>
+        /// <exception cref="ArgumentException"></exception>
+        public void GetStringOrFile(out int choice)
+        {
+            Console.WriteLine("Выберите один из возможных вариантов загрузки текста");
+            while (true)
+            {
+                try
+                {
+                    Console.WriteLine("1 - ввести текст в консоль");
+                    Console.WriteLine("2 - ввести адрес файла на компьютере");
+                    int n = Convert.ToInt16(Console.ReadLine());
+                    if (n != 1 && n != 2)
+                    {
+                        throw new ArgumentException();
+                    }
+
+                    choice = n;
+                    break;
+                }
+                catch (ArgumentException)
+                {
+                    Console.WriteLine("Введённый выбор должен быть либо 1, либо 2. Повторите ввод");
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Введённое значение должно быть натуральным числом от 1 до 3. Повторите, пожалуйста, ввод");
+                }
+            }
+        }
     }
 }
