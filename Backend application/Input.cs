@@ -1,0 +1,44 @@
+using System;
+
+namespace Antiplagiat
+{
+    public class Input
+    {
+        /// <summary>
+        /// Данный метод будет первоначально спрашивать у пользователя, что нужно сделать
+        /// </summary>
+        /// <param name="choice"> В данную переменную мы запишем выбор пользователя </param>
+        public void StartChoice(out int choice)
+        {
+            Console.WriteLine("Приветствуем Вас в программе антиплагиата!");
+            Console.WriteLine("Что желаете сделать?");
+            // заводим бесконечный цикл, чтобы в случае неправильного ввода от пользователя - повторить ввод данных
+            while (true)
+            {
+                try
+                {
+                    Console.WriteLine("1 - Загрузить текст для проверки");
+                    Console.WriteLine("2- Добавить текст в эталонные документы");
+                    Console.WriteLine("3- Выйти");
+                    int n = Convert.ToInt16(Console.ReadLine());
+                    if (n != 1 && n != 2 && n != 3)
+                    {
+                        throw new ArgumentException();
+                    }
+
+                    choice = n;
+                    break;
+                }
+                catch (ArgumentException)
+                {
+                    Console.WriteLine(
+                        "Введённое вами значение должно быть либо 1, либо 2, либо 3. Повторите, пожалуйста, ввод");
+                }
+                catch(Exception)
+                {
+                    Console.WriteLine("Введённое значение должно быть натуральным числом от 1 до 3. Повторите, пожалуйста, ввод");
+                }
+            }
+        }
+    }
+}
