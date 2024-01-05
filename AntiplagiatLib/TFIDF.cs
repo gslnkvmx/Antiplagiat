@@ -1,6 +1,4 @@
-﻿using System.IO;
-using System.Reflection;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 namespace AntiplagiatLib
 {
@@ -66,16 +64,32 @@ namespace AntiplagiatLib
                 Console.WriteLine("Cannot open file!", ex.Message);
             }
             */
-            var appDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            Console.WriteLine(appDir);
-            Console.WriteLine(Path.Combine(appDir, @"RefDocsTFIDF\" + Path.GetFileName(docPatch)));
+            DirectoryInfo di = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
 
-            var wordMap = TFIDF.GetWords(docPatch);
-
-            using (StreamWriter outputFile = new StreamWriter(Path.Combine(@"\RefDocsTFIDF\", Path.GetFileName(docPatch)), true))
+            try
             {
-                foreach (string word in wordMap.Keys) outputFile.WriteLine($"{word}: {wordMap[word]}");
+                di = Directory.CreateDirectory(Path.Combine(di.FullName, "AntiplagiatDocs"));
+                Console.WriteLine(di.FullName);
             }
+            catch (Exception ex)
+            {
+                // Обработка исключений
+                Console.WriteLine($"Ошибка при создании папки: {ex.Message}");
+                return;
+            }
+
+            var fullPath = Path.Combine(di.FullName, Path.GetFileName(docPatch));
+            Console.WriteLine(fullPath);
+
+            var wordMap = TFIDF.GetWords(fullPath);
+
+            string newFileName = "TFIDF_"+Path.GetFileName(fullPath);
+            string newFilePath = Path.Combine(di.FullName, newFileName);
+
+            using (StreamWriter writer = new StreamWriter(newFilePath, true))
+            {
+                foreach (string word in wordMap.Keys) writer.WriteLine($"{word}: {wordMap[word]}");
+            };
         }
     }
 }

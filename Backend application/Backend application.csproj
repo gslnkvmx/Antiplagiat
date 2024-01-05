@@ -9,11 +9,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AntiplagiatLib\AntiplagiatLib.csproj" />
+    <Compile Remove="RefDocsTFIDF\**" />
+    <EmbeddedResource Remove="RefDocsTFIDF\**" />
+    <None Remove="RefDocsTFIDF\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="RefDocsTFIDF\" />
+    <ProjectReference Include="..\AntiplagiatLib\AntiplagiatLib.csproj" />
   </ItemGroup>
 
 </Project>
