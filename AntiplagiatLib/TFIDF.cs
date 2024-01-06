@@ -1,9 +1,11 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Security;
+using System.Text.RegularExpressions;
 
 namespace AntiplagiatLib
 {
     public class TFIDF
     {
+        private static string _directoryPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "AntiplagiatDocs");
 
         /// <summary>
         /// Возвращает словарь форматата [слово]: кол-во повторений данного слова в тексте
@@ -39,37 +41,36 @@ namespace AntiplagiatLib
                     }
                 }
             }
-            catch (Exception ex)
+            catch (UnauthorizedAccessException)
             {
-                Console.WriteLine("Не удалось обработать документ!", ex.Message);
+                Console.WriteLine("Нет доступа к документу! " + docPatch);
                 throw;
+            }
+            catch (SecurityException)
+            {
+                Console.WriteLine("Нет доступа к документу! " + docPatch);
+                throw;
+            }
+            catch (ArgumentException) {
+                Console.WriteLine("Недопустимое имя файла! " + docPatch);
+            }
+            catch(DirectoryNotFoundException) {
+                Console.WriteLine("Не найден файл с таким именем! "+docPatch);
             }
 
             //Вывод получившегося словаря
-            foreach (string word in wordMap.Keys) Console.WriteLine($"{word}: {wordMap[word]}");
+            //foreach (string word in wordMap.Keys) Console.WriteLine($"{word}: {wordMap[word]}");
 
             return wordMap;
         }
 
-        public static void AddToRefDocs(string docPatch)
+        public static void CreateDir()
         {
-            /*
-            try
-            {
-                FileStream fs = File.Open(docPatch, FileMode.Open, FileAccess.Read);
-                string fileName = Path.GetFileName(docPatch);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Cannot open file!", ex.Message);
-            }
-            */
             DirectoryInfo di = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
 
             try
             {
-                di = Directory.CreateDirectory(Path.Combine(di.FullName, "AntiplagiatDocs"));
-                Console.WriteLine(di.FullName);
+                Console.WriteLine(_directoryPath);
             }
             catch (Exception ex)
             {
@@ -77,19 +78,39 @@ namespace AntiplagiatLib
                 Console.WriteLine($"Ошибка при создании папки: {ex.Message}");
                 return;
             }
+        }
 
-            var fullPath = Path.Combine(di.FullName, Path.GetFileName(docPatch));
-            Console.WriteLine(fullPath);
+        public static Dictionary<string, int> AddToRefDocs(string docPath)
+        {
+            var fullPath = Path.Combine(_directoryPath, Path.GetFileName(docPath));
 
-            var wordMap = TFIDF.GetWords(fullPath);
+            Dictionary<string, int> wordMap = new Dictionary<string, int>();
+            try
+            {
+                wordMap = TFIDF.GetWords(docPath);
+            }
+            catch
+            {
+                Console.WriteLine("Не удалось добавить данный файл! " + docPath);
+                throw;
+            }
 
             string newFileName = "TFIDF_"+Path.GetFileName(fullPath);
-            string newFilePath = Path.Combine(di.FullName, newFileName);
+            string newFilePath = Path.Combine(_directoryPath, newFileName);
 
-            using (StreamWriter writer = new StreamWriter(newFilePath, true))
+            using (StreamWriter writer = new StreamWriter(newFilePath, false))
             {
                 foreach (string word in wordMap.Keys) writer.WriteLine($"{word}: {wordMap[word]}");
             };
+
+
+            Console.WriteLine("Файл добавлен: " +newFilePath);
+            return wordMap;
+        }
+
+        public static void IDF()
+        {
+
         }
     }
 }

@@ -6,7 +6,7 @@ namespace Backend_application
     {
         static void Main(string[] args)
         {
-            TFIDF.AddToRefDocs(@"C:\Users\maxgu\Downloads\tot.txt");
+            TFIDF.AddToRefDocs(@"C:\Users\maxgu\OneDrive\Документы\tot.txt");
         }
     }
 }
