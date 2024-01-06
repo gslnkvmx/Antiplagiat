@@ -7,6 +7,27 @@ namespace AntiplagiatLib
     {
         private static string _directoryPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "AntiplagiatDocs");
 
+        public static void UploadRefDocs(string dirPath)
+        {
+            TFIDF.CreateDir();
+            DirectoryInfo directoryInfo = new DirectoryInfo(dirPath);
+            if (!directoryInfo.Exists) { Console.WriteLine("Неверно указан путь!"); return; }
+            foreach (FileInfo fileInfo in directoryInfo.GetFiles("*.txt", SearchOption.AllDirectories))
+            {
+                string docPath = fileInfo.FullName;
+                TFIDF.GetWords(docPath);
+                TFIDF.AddToRefDocs(docPath);
+            }
+
+            var idfList = TFIDF.FormIdfList(out int numOfDocs);
+
+            DirectoryInfo appDirectoryInfo = new DirectoryInfo(_directoryPath);
+            foreach (FileInfo fileInfo in appDirectoryInfo.GetFiles("*.txt", SearchOption.AllDirectories))
+            {
+                string docPath = fileInfo.FullName;
+                TFIDF.countTFIDF(docPath, idfList, numOfDocs);
+            }
+        }
         /// <summary>
         /// Возвращает словарь форматата [слово]: кол-во повторений данного слова в тексте
         /// При подсчете слов переводит все слова в нижний регистр и удалаяет все символы кроме букв на латинице и кириллице, цифр и пробелов
@@ -51,11 +72,13 @@ namespace AntiplagiatLib
                 Console.WriteLine("Нет доступа к документу! " + docPatch);
                 throw;
             }
-            catch (ArgumentException) {
+            catch (ArgumentException)
+            {
                 Console.WriteLine("Недопустимое имя файла! " + docPatch);
             }
-            catch(DirectoryNotFoundException) {
-                Console.WriteLine("Не найден файл с таким именем! "+docPatch);
+            catch (DirectoryNotFoundException)
+            {
+                Console.WriteLine("Не найден файл с таким именем! " + docPatch);
             }
 
             //Вывод получившегося словаря
@@ -70,7 +93,8 @@ namespace AntiplagiatLib
 
             try
             {
-                Console.WriteLine(_directoryPath);
+                Directory.CreateDirectory(_directoryPath);
+                Console.WriteLine("Папка создана! "+ _directoryPath);
             }
             catch (Exception ex)
             {
@@ -95,7 +119,7 @@ namespace AntiplagiatLib
                 throw;
             }
 
-            string newFileName = "TFIDF_"+Path.GetFileName(fullPath);
+            string newFileName = "TFIDF_" + Path.GetFileName(fullPath);
             string newFilePath = Path.Combine(_directoryPath, newFileName);
 
             using (StreamWriter writer = new StreamWriter(newFilePath, false))
@@ -104,13 +128,95 @@ namespace AntiplagiatLib
             };
 
 
-            Console.WriteLine("Файл добавлен: " +newFilePath);
+            Console.WriteLine("Файл добавлен: " + newFilePath);
             return wordMap;
         }
 
-        public static void IDF()
+        public static Dictionary<string, int> FormIdfList(out int numOfDocs)
         {
+            Dictionary<string, int> idfList = new Dictionary<string, int>();
+            numOfDocs = 0;
 
+            DirectoryInfo directoryInfo = new DirectoryInfo(_directoryPath);
+            foreach (FileInfo fileInfo in directoryInfo.GetFiles("*.txt", SearchOption.AllDirectories))
+            {
+                using (StreamReader reader = new StreamReader(fileInfo.FullName))
+                {
+                    Console.WriteLine("Открыт файл для IDF: " + fileInfo.FullName);
+                    while (!reader.EndOfStream)
+                    {
+                        string line = reader.ReadLine()!;
+                        string[] parts = line.Split(": ");
+
+                        if (parts.Length == 2 && !string.IsNullOrEmpty(parts[0]) && !string.IsNullOrEmpty(parts[1]))
+                        {
+                            if (idfList.ContainsKey(parts[0])) idfList[parts[0]] += 1;
+                            else idfList[parts[0]] = 1;
+                        }
+                    }
+                }
+                numOfDocs++;
+            }
+
+            //foreach (string word in idfList.Keys) Console.WriteLine($"{word}: {idfList[word]}");
+            return idfList;
+        }
+
+        public static void countTFIDF(string docPath)
+        {
+            var idfList = TFIDF.FormIdfList(out int numOfDocs);
+            Dictionary<string, int> docDict = new Dictionary<string, int>();
+
+            using (StreamReader reader = new StreamReader(docPath))
+            {
+                Console.WriteLine("Открыт файл для подсчета TFIDF: " + docPath);
+                while (!reader.EndOfStream)
+                {
+                    string line = reader.ReadLine();
+                    string[] parts = line.Split(':');
+
+                    if (parts.Length == 2 && !string.IsNullOrEmpty(parts[0]) && !string.IsNullOrEmpty(parts[1]))
+                    {
+                        docDict.Add(parts[0], Int32.Parse(parts[1]));
+                    }
+                }
+            }
+
+            using (StreamWriter writer = new StreamWriter(docPath, false))
+            {
+                foreach (string word in docDict.Keys)
+                {
+                    writer.WriteLine($"{word}: {docDict[word] * Math.Log10((double)numOfDocs / (double)idfList[word])}");
+                }
+            };
+        }
+
+        public static void countTFIDF(string docPath, Dictionary<string, int> idfList, int numOfDocs)
+        {
+            Dictionary<string, int> docDict = new Dictionary<string, int>();
+
+            using (StreamReader reader = new StreamReader(docPath))
+            {
+                Console.WriteLine("Открыт файл для подсчета TFIDF: " + docPath);
+                while (!reader.EndOfStream)
+                {
+                    string line = reader.ReadLine();
+                    string[] parts = line.Split(':');
+
+                    if (parts.Length == 2 && !string.IsNullOrEmpty(parts[0]) && !string.IsNullOrEmpty(parts[1]))
+                    {
+                        docDict.Add(parts[0], Int32.Parse(parts[1]));
+                    }
+                }
+            }
+
+            using (StreamWriter writer = new StreamWriter(docPath, false))
+            {
+                foreach (string word in docDict.Keys)
+                {
+                    writer.WriteLine($"{word}: {docDict[word] * Math.Log10((double)numOfDocs / (double)idfList[word])}");
+                }
+            };
         }
     }
 }
