@@ -94,7 +94,7 @@ namespace AntiplagiatLib
             try
             {
                 Directory.CreateDirectory(_directoryPath);
-                Console.WriteLine("Папка создана! "+ _directoryPath);
+                Console.WriteLine("Папка создана! " + _directoryPath);
             }
             catch (Exception ex)
             {
@@ -217,6 +217,54 @@ namespace AntiplagiatLib
                     writer.WriteLine($"{word}: {docDict[word] * Math.Log10((double)numOfDocs / (double)idfList[word])}");
                 }
             };
+        }
+
+        public static Dictionary<string, double> FindKeySentences(string docPath)
+        {
+            Regex clear = new Regex(
+                  "(?:[^а-яА-ЯёЁa-zA-Z0-9 ]|(?<=['\"])s)",
+                  RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
+            var fullPath = Path.Combine(_directoryPath, Path.GetFileName(docPath));
+            string newFileName = "TFIDF_" + Path.GetFileName(fullPath);
+            string newFilePath = Path.Combine(_directoryPath, newFileName);
+
+            Dictionary<string, double> docDict = new Dictionary<string, double>();
+            Dictionary<string, double> TfidfSentences = new Dictionary<string, double>();
+
+            using (StreamReader reader = new StreamReader(newFilePath))
+            {
+                while (!reader.EndOfStream)
+                {
+                    string line = reader.ReadLine();
+                    string[] parts = line.Split(':');
+
+                    if (parts.Length == 2 && !string.IsNullOrEmpty(parts[0]) && !string.IsNullOrEmpty(parts[1]))
+                    {
+                        docDict.Add(parts[0], Double.Parse(parts[1]));
+                    }
+                }
+            }
+
+            using (StreamReader reader = new StreamReader(docPath))
+            {
+                while (!reader.EndOfStream)
+                {
+                    double TfidfSum = 0;
+                    string line = reader.ReadLine()!;
+                    string strippedLine = clear.Replace(line, "").ToLower();
+                    string[] words = strippedLine.Split(' ');
+
+                    foreach (string word in words)
+                    {
+                        if(docDict.ContainsKey(word)) TfidfSum += docDict[word];
+                    }
+                    if (!String.IsNullOrEmpty(line)) TfidfSentences.Add(line, TfidfSum);
+                }
+            }
+            return TfidfSentences;
+            //newFileName = "Sentences_" + Path.GetFileName(fullPath);
+            //newFilePath = Path.Combine(_directoryPath, newFileName);
         }
     }
 }
