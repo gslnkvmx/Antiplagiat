@@ -1,4 +1,6 @@
 ﻿using AntiplagiatLib;
+using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 
 namespace Backend_application
 {
@@ -6,13 +8,52 @@ namespace Backend_application
     {
         static void Main(string[] args)
         {
-            //TFIDF.AddToRefDocs(@"C:\Users\maxgu\Downloads\tot.txt");
-            //TFIDF.countTFIDF(@"C:\Users\maxgu\AppData\Roaming\AntiplagiatDocs\TFIDF_tot.txt");
-            TFIDF.UploadRefDocs(@"C:\Users\maxgu\OneDrive\Документы\RefTexts");
-            var sen = TFIDF.FindKeySentences(@"C:\Users\maxgu\OneDrive\Документы\RefTexts\text1.txt");
-            foreach (string line in sen.Keys)
+            TFIDF.UploadRefDocs(Directory.GetCurrentDirectory() + "\\texts");
+
+            string[] dirs = Directory.GetFiles(Directory.GetCurrentDirectory() + "\\texts", "*.*", SearchOption.AllDirectories);
+            foreach (var item in dirs)
             {
-                Console.WriteLine(line + $"-> {sen[line]}");
+                Console.WriteLine(item);
+            }
+
+            const int SentencesCount = 5;
+
+            Dictionary<string, double>[] SentencesTFIDF = new Dictionary<string, double>[dirs.Length];
+            HashArray[,] SentencesHashArr = new HashArray[dirs.Length, SentencesCount];
+            for (int i = 0; i < dirs.Length; ++i)
+            {
+                SentencesTFIDF[i] = TFIDF.FindKeySentences(dirs[i], SentencesCount);
+
+                Console.WriteLine(dirs[i]);
+                int j = 0;
+                foreach (var line in SentencesTFIDF[i].Keys)
+                {
+                    SentencesHashArr[i, j] = new HashArray(line);
+                    
+                    Console.WriteLine($"{line.Substring(0, Math.Min(32, line.Length))}... -> {SentencesTFIDF[i][line]}");
+                    Console.WriteLine($"{i}, {j}");
+                    SentencesHashArr[i, j].Print();
+                    j++;
+                }
+                Console.WriteLine();
+            }
+
+            string s = "засмеялся Густав";
+            HashArray s_h = new HashArray(s);
+            for (int i = 0; i < SentencesHashArr.GetLength(0); ++i)
+            {
+                for (int j = 0; j < SentencesCount; ++j)
+                {
+                    if (SentencesHashArr[i, j] is null) continue;
+
+                    List<int> pos = s_h.Positions(SentencesHashArr[i, j]);
+                    Console.WriteLine($"{SentencesHashArr[i, j].s}:");
+                    foreach (int k in pos)
+                    {
+                        Console.WriteLine(k);
+                    }
+                    Console.WriteLine();
+                }
             }
         }
     }

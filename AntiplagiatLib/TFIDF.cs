@@ -193,7 +193,7 @@ namespace AntiplagiatLib
 
         public static void countTFIDF(string docPath, Dictionary<string, int> idfList, int numOfDocs)
         {
-            Dictionary<string, int> docDict = new Dictionary<string, int>();
+            Dictionary<string, double> docDict = new Dictionary<string, double>();
 
             using (StreamReader reader = new StreamReader(docPath))
             {
@@ -209,7 +209,14 @@ namespace AntiplagiatLib
                     }
                 }
             }
-
+            using (StreamWriter writer = new StreamWriter(docPath, false))
+            {
+                foreach (string word in docDict.Keys)
+                {
+                    docDict[word] = docDict[word] * Math.Log10((double)numOfDocs / (double)idfList[word]);
+                }
+            };
+            docDict = docDict.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
             using (StreamWriter writer = new StreamWriter(docPath, false))
             {
                 foreach (string word in docDict.Keys)
@@ -219,7 +226,7 @@ namespace AntiplagiatLib
             };
         }
 
-        public static Dictionary<string, double> FindKeySentences(string docPath)
+        public static Dictionary<string, double> FindKeySentences(string docPath, int SentencesCount)
         {
             Regex clear = new Regex(
                   "(?:[^а-яА-ЯёЁa-zA-Z0-9 ]|(?<=['\"])s)",
@@ -259,8 +266,18 @@ namespace AntiplagiatLib
                     {
                         if(docDict.ContainsKey(word)) TfidfSum += docDict[word];
                     }
-                    if (!String.IsNullOrEmpty(line)) TfidfSentences.Add(line, TfidfSum);
+                    if (!String.IsNullOrEmpty(line) && 
+                        !TfidfSentences.ContainsKey(line)) TfidfSentences.Add(line, TfidfSum / words.Length);
                 }
+            }
+            TfidfSentences = TfidfSentences.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+
+            int i = 0;
+            foreach (string word in TfidfSentences.Keys)
+            {
+                i++;
+                if (i < SentencesCount) continue;
+                TfidfSentences.Remove(word);
             }
             return TfidfSentences;
             //newFileName = "Sentences_" + Path.GetFileName(fullPath);
