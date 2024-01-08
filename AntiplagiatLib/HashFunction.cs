@@ -16,10 +16,11 @@ namespace AntiplagiatLib
         {
             Init();
         }
-
+        // test pull request from sublime text_2
         internal static int Mul(long a, int b)
         {
             return (int)(a * b % MOD);
+        
         }
 
         internal static int Add(long a, int b)
