@@ -35,7 +35,7 @@ namespace AntiplagiatLib
         {
             return Add(h[r], -Mul(h[l - 1], p[r - l + 1]));
         }
-
+        
         public void Print()
         {
             for (int i = 0; i < h.Count; ++i)
