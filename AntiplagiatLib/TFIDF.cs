@@ -1,4 +1,5 @@
-﻿using System.Security;
+﻿using System.IO;
+using System.Security;
 using System.Text.RegularExpressions;
 
 namespace AntiplagiatLib
@@ -6,6 +7,32 @@ namespace AntiplagiatLib
     public class TFIDF
     {
         private static string _directoryPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "AntiplagiatDocs");
+
+        //Для удаления всеx символов кроме букв на латинице и кириллице, цифр и пробелов
+        private static Regex clear = new Regex(
+                  "(?:[^а-яА-ЯёЁa-zA-Z0-9 ]|(?<=['\"])s)",
+                  RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
+        private static Dictionary<string, double> readDict(string path)
+        {
+            Dictionary<string, double> docDict = new Dictionary<string, double>();
+
+            using (StreamReader reader = new StreamReader(path))
+            {
+                while (!reader.EndOfStream)
+                {
+                    string line = reader.ReadLine();
+                    string[] parts = line.Split(':');
+
+                    if (parts.Length == 2 && !string.IsNullOrEmpty(parts[0]) && !string.IsNullOrEmpty(parts[1]))
+                    {
+                        docDict.Add(parts[0], Double.Parse(parts[1]));
+                    }
+                }
+            }
+
+            return docDict;
+        }
 
         public static void UploadRefDocs(string dirPath)
         {
@@ -36,11 +63,6 @@ namespace AntiplagiatLib
         /// <returns>Словарь форматата [слово]: кол-во повторений данного слова в тексте</returns>
         public static Dictionary<string, int> GetWords(string docPatch)
         {
-            //Для удаления всеx символов кроме букв на латинице и кириллице, цифр и пробелов
-            Regex clear = new Regex(
-                  "(?:[^а-яА-ЯёЁa-zA-Z0-9 ]|(?<=['\"])s)",
-                  RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
-
             Dictionary<string, int> wordMap = new Dictionary<string, int>();
 
             try
@@ -165,55 +187,26 @@ namespace AntiplagiatLib
         public static void countTFIDF(string docPath)
         {
             var idfList = TFIDF.FormIdfList(out int numOfDocs);
-            Dictionary<string, int> docDict = new Dictionary<string, int>();
-
-            using (StreamReader reader = new StreamReader(docPath))
-            {
-                Console.WriteLine("Открыт файл для подсчета TFIDF: " + docPath);
-                while (!reader.EndOfStream)
-                {
-                    string line = reader.ReadLine();
-                    string[] parts = line.Split(':');
-
-                    if (parts.Length == 2 && !string.IsNullOrEmpty(parts[0]) && !string.IsNullOrEmpty(parts[1]))
-                    {
-                        docDict.Add(parts[0], Int32.Parse(parts[1]));
-                    }
-                }
-            }
+            Dictionary<string, double> docDict = readDict(docPath);
 
             using (StreamWriter writer = new StreamWriter(docPath, false))
             {
                 foreach (string word in docDict.Keys)
                 {
-                    writer.WriteLine($"{word}: {docDict[word] * Math.Log10((double)numOfDocs / (double)idfList[word])}");
+                    writer.WriteLine($"{word}: {docDict[word] * Math.Log10((double)numOfDocs / idfList[word])}");
                 }
             };
         }
 
         public static void countTFIDF(string docPath, Dictionary<string, int> idfList, int numOfDocs)
         {
-            Dictionary<string, double> docDict = new Dictionary<string, double>();
+            Dictionary<string, double> docDict = readDict(docPath);
 
-            using (StreamReader reader = new StreamReader(docPath))
-            {
-                Console.WriteLine("Открыт файл для подсчета TFIDF: " + docPath);
-                while (!reader.EndOfStream)
-                {
-                    string line = reader.ReadLine();
-                    string[] parts = line.Split(':');
-
-                    if (parts.Length == 2 && !string.IsNullOrEmpty(parts[0]) && !string.IsNullOrEmpty(parts[1]))
-                    {
-                        docDict.Add(parts[0], Int32.Parse(parts[1]));
-                    }
-                }
-            }
             using (StreamWriter writer = new StreamWriter(docPath, false))
             {
                 foreach (string word in docDict.Keys)
                 {
-                    docDict[word] = docDict[word] * Math.Log10((double)numOfDocs / (double)idfList[word]);
+                    docDict[word] = docDict[word] * Math.Log10((double)numOfDocs / idfList[word]);
                 }
             };
             docDict = docDict.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
@@ -221,37 +214,19 @@ namespace AntiplagiatLib
             {
                 foreach (string word in docDict.Keys)
                 {
-                    writer.WriteLine($"{word}: {docDict[word] * Math.Log10((double)numOfDocs / (double)idfList[word])}");
+                    writer.WriteLine($"{word}: {docDict[word] * Math.Log10((double)numOfDocs / idfList[word])}");
                 }
             };
         }
 
         public static Dictionary<string, double> FindKeySentences(string docPath, int SentencesCount)
         {
-            Regex clear = new Regex(
-                  "(?:[^а-яА-ЯёЁa-zA-Z0-9 ]|(?<=['\"])s)",
-                  RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
-
             var fullPath = Path.Combine(_directoryPath, Path.GetFileName(docPath));
             string newFileName = "TFIDF_" + Path.GetFileName(fullPath);
             string newFilePath = Path.Combine(_directoryPath, newFileName);
 
-            Dictionary<string, double> docDict = new Dictionary<string, double>();
+            Dictionary<string, double> docDict = readDict(newFilePath);
             Dictionary<string, double> TfidfSentences = new Dictionary<string, double>();
-
-            using (StreamReader reader = new StreamReader(newFilePath))
-            {
-                while (!reader.EndOfStream)
-                {
-                    string line = reader.ReadLine();
-                    string[] parts = line.Split(':');
-
-                    if (parts.Length == 2 && !string.IsNullOrEmpty(parts[0]) && !string.IsNullOrEmpty(parts[1]))
-                    {
-                        docDict.Add(parts[0], Double.Parse(parts[1]));
-                    }
-                }
-            }
 
             using (StreamReader reader = new StreamReader(docPath))
             {
