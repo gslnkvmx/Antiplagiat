@@ -37,7 +37,7 @@ namespace Backend_application
                 }
                 Console.WriteLine();
             }
-
+            // test pull request
             string s = "засмеялся Густав";
             HashArray s_h = new HashArray(s);
             for (int i = 0; i < SentencesHashArr.GetLength(0); ++i)
