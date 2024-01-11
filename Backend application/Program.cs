@@ -8,8 +8,10 @@ namespace Backend_application
     {
         static void Main(string[] args)
         {
-            TFIDF.UploadRefDocs(Directory.GetCurrentDirectory() + "\\texts");
+            
+            TFIDF.UploadRefDocs(@"C:\Users\maxgu\OneDrive\Документы\RefTexts");
 
+            /*
             string[] dirs = Directory.GetFiles(Directory.GetCurrentDirectory() + "\\texts", "*.*", SearchOption.AllDirectories);
             foreach (var item in dirs)
             {
@@ -37,6 +39,7 @@ namespace Backend_application
                 }
                 Console.WriteLine();
             }
+            
             // test pull request
             string s = "засмеялся Густав";
             HashArray s_h = new HashArray(s);
@@ -55,6 +58,11 @@ namespace Backend_application
                     Console.WriteLine();
                 }
             }
+            */
+            
+            CosineSimilarity.Calculate(
+                @"C:\Users\maxgu\OneDrive\Документы\Текст 1.txt",
+               TFIDF.DirectoryPath);
         }
     }
 }

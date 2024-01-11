@@ -8,12 +8,13 @@ namespace AntiplagiatLib
     {
         private static string _directoryPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "AntiplagiatDocs");
 
+        public static string DirectoryPath { get => _directoryPath; }
         //Для удаления всеx символов кроме букв на латинице и кириллице, цифр и пробелов
         private static Regex clear = new Regex(
                   "(?:[^а-яА-ЯёЁa-zA-Z0-9 ]|(?<=['\"])s)",
                   RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
-        private static Dictionary<string, double> readDict(string path)
+        public static Dictionary<string, double> readDict(string path)
         {
             Dictionary<string, double> docDict = new Dictionary<string, double>();
 
@@ -49,7 +50,7 @@ namespace AntiplagiatLib
             var idfList = TFIDF.FormIdfList(out int numOfDocs);
 
             DirectoryInfo appDirectoryInfo = new DirectoryInfo(_directoryPath);
-            foreach (FileInfo fileInfo in appDirectoryInfo.GetFiles("*.txt", SearchOption.AllDirectories))
+            foreach (FileInfo fileInfo in appDirectoryInfo.GetFiles("TFIDF_*.txt", SearchOption.AllDirectories))
             {
                 string docPath = fileInfo.FullName;
                 TFIDF.countTFIDF(docPath, idfList, numOfDocs);
@@ -160,7 +161,7 @@ namespace AntiplagiatLib
             numOfDocs = 0;
 
             DirectoryInfo directoryInfo = new DirectoryInfo(_directoryPath);
-            foreach (FileInfo fileInfo in directoryInfo.GetFiles("*.txt", SearchOption.AllDirectories))
+            foreach (FileInfo fileInfo in directoryInfo.GetFiles("TFIDF_*.txt", SearchOption.AllDirectories))
             {
                 using (StreamReader reader = new StreamReader(fileInfo.FullName))
                 {
@@ -180,7 +181,17 @@ namespace AntiplagiatLib
                 numOfDocs++;
             }
 
-            //foreach (string word in idfList.Keys) Console.WriteLine($"{word}: {idfList[word]}");
+            string idfPath = Path.Combine(_directoryPath, "idfCoef.txt");
+            var existingIdfDict = new Dictionary<string, double>();
+            if (Path.Exists(idfPath)) { existingIdfDict = readDict(idfPath); };
+
+            using (StreamWriter writer = new StreamWriter(idfPath, true))
+            {
+                foreach (string word in idfList.Keys) {
+                    if (!existingIdfDict.ContainsKey(word))
+                        writer.WriteLine($"{word}: {idfList[word]}");
+                };
+            }
             return idfList;
         }
 
@@ -201,8 +212,8 @@ namespace AntiplagiatLib
         public static void countTFIDF(string docPath, Dictionary<string, int> idfList, int numOfDocs)
         {
             Dictionary<string, double> docDict = readDict(docPath);
-
-            using (StreamWriter writer = new StreamWriter(docPath, false))
+    
+            using (StreamWriter writer = new StreamWriter(docPath, true))
             {
                 foreach (string word in docDict.Keys)
                 {
