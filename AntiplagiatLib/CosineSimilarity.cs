@@ -1,11 +1,13 @@
 ﻿namespace AntiplagiatLib
 {
-    public class CosineSimilarity
+    public class CosineSimilarity: IAntiplagiatMethod
     {
-        public static void Calculate(string pathToFile, string pathToStandartFiles)
+        public static Dictionary<string, double> Calculate(string pathToFile, string pathToStandartFiles)
         {
             DirectoryInfo directoryInfo = new DirectoryInfo(pathToStandartFiles);
-            if (!directoryInfo.Exists) { Console.WriteLine("Неверно указан путь!: " + pathToStandartFiles); return; }
+            if (!directoryInfo.Exists) { Console.WriteLine("Неверно указан путь!: " + pathToStandartFiles); throw new DirectoryNotFoundException(); }
+
+            var similarityList = new Dictionary<string, double>();
 
             var userFileDict = TFIDF.GetWords(pathToFile);
 
@@ -35,7 +37,10 @@
                 }
 
                 Console.WriteLine(docPath+ $" Result = {abSum/(Math.Sqrt(aSquareSum)* Math.Sqrt(bSquareSum))}" );
+                similarityList.Add(docPath, abSum / (Math.Sqrt(aSquareSum) * Math.Sqrt(bSquareSum)));
             }
+
+            return similarityList;
         }
 
     }

@@ -234,19 +234,25 @@ namespace AntiplagiatLib
 
             using (StreamReader reader = new StreamReader(docPath))
             {
-                while (!reader.EndOfStream)
+                // Читаем весь текст из файла
+                string fileContent = reader.ReadToEnd();
+
+                char[] separators = { '.', '!', '?' };
+                // Разбиваем текст на предложения
+                string[] sentences = fileContent.Split(separators, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (string sentence in sentences)
                 {
                     double TfidfSum = 0;
-                    string line = reader.ReadLine()!;
-                    string strippedLine = clear.Replace(line, "").ToLower();
+                    string strippedLine = clear.Replace(sentence, "").ToLower();
                     string[] words = strippedLine.Split(' ');
 
                     foreach (string word in words)
                     {
                         if(docDict.ContainsKey(word)) TfidfSum += docDict[word];
                     }
-                    if (!String.IsNullOrEmpty(line) && 
-                        !TfidfSentences.ContainsKey(line)) TfidfSentences.Add(line, TfidfSum / words.Length);
+                    if (!String.IsNullOrEmpty(sentence) && 
+                        !TfidfSentences.ContainsKey(sentence)) TfidfSentences.Add(sentence, TfidfSum / words.Length);
                 }
             }
             TfidfSentences = TfidfSentences.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
