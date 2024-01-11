@@ -37,6 +37,7 @@ namespace AntiplagiatLib
 
         public static void UploadRefDocs(string dirPath)
         {
+            if (Directory.Exists(_directoryPath)) Directory.Delete(_directoryPath, true);
             TFIDF.CreateDir();
             DirectoryInfo directoryInfo = new DirectoryInfo(dirPath);
             if (!directoryInfo.Exists) { Console.WriteLine("Неверно указан путь!"); return; }
@@ -112,7 +113,6 @@ namespace AntiplagiatLib
 
         public static void CreateDir()
         {
-            DirectoryInfo di = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
 
             try
             {
@@ -155,9 +155,9 @@ namespace AntiplagiatLib
             return wordMap;
         }
 
-        public static Dictionary<string, int> FormIdfList(out int numOfDocs)
+        public static Dictionary<string, double> FormIdfList(out int numOfDocs)
         {
-            Dictionary<string, int> idfList = new Dictionary<string, int>();
+            Dictionary<string, double> idfList = new Dictionary<string, double>();
             numOfDocs = 0;
 
             DirectoryInfo directoryInfo = new DirectoryInfo(_directoryPath);
@@ -173,8 +173,8 @@ namespace AntiplagiatLib
 
                         if (parts.Length == 2 && !string.IsNullOrEmpty(parts[0]) && !string.IsNullOrEmpty(parts[1]))
                         {
-                            if (idfList.ContainsKey(parts[0])) idfList[parts[0]] += 1;
-                            else idfList[parts[0]] = 1;
+                            if (idfList.ContainsKey(parts[0])) idfList[parts[0]] += 1.0;
+                            else idfList[parts[0]] = 1.0;
                         }
                     }
                 }
@@ -189,7 +189,7 @@ namespace AntiplagiatLib
             {
                 foreach (string word in idfList.Keys) {
                     if (!existingIdfDict.ContainsKey(word))
-                        writer.WriteLine($"{word}: {idfList[word]}");
+                        writer.WriteLine($"{word}: {Math.Log10((double)numOfDocs / idfList[word])}");
                 };
             }
             return idfList;
@@ -204,22 +204,15 @@ namespace AntiplagiatLib
             {
                 foreach (string word in docDict.Keys)
                 {
-                    writer.WriteLine($"{word}: {docDict[word] * Math.Log10((double)numOfDocs / idfList[word])}");
+                    writer.WriteLine($"{word}: {Math.Log10((double)numOfDocs / idfList[word])}");
                 }
             };
         }
 
-        public static void countTFIDF(string docPath, Dictionary<string, int> idfList, int numOfDocs)
+        public static void countTFIDF(string docPath, Dictionary<string, double> idfList, int numOfDocs)
         {
             Dictionary<string, double> docDict = readDict(docPath);
-    
-            using (StreamWriter writer = new StreamWriter(docPath, true))
-            {
-                foreach (string word in docDict.Keys)
-                {
-                    docDict[word] = docDict[word] * Math.Log10((double)numOfDocs / idfList[word]);
-                }
-            };
+   
             docDict = docDict.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
             using (StreamWriter writer = new StreamWriter(docPath, false))
             {

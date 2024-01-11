@@ -61,7 +61,7 @@ namespace Backend_application
             */
             
             CosineSimilarity.Calculate(
-                @"C:\Users\maxgu\OneDrive\Документы\Текст 1.txt",
+                @"C:\Users\maxgu\OneDrive\Документы\UserTexts\Текст 5.txt",
                TFIDF.DirectoryPath);
         }
     }

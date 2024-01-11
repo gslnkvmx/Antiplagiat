@@ -5,7 +5,7 @@
         public static void Calculate(string pathToFile, string pathToStandartFiles)
         {
             DirectoryInfo directoryInfo = new DirectoryInfo(pathToStandartFiles);
-            if (!directoryInfo.Exists) { Console.WriteLine("Тут Неверно указан путь!"); return; }
+            if (!directoryInfo.Exists) { Console.WriteLine("Неверно указан путь!: " + pathToStandartFiles); return; }
 
             var userFileDict = TFIDF.GetWords(pathToFile);
 
@@ -21,13 +21,15 @@
                 double bSquareSum = 0.0;
                 string docPath = fileInfo.FullName;
                 var fileDict = TFIDF.readDict(docPath);
-                foreach(string word in allWordsIdf.Keys) {
+                //Console.WriteLine(docPath);
+                foreach (string word in allWordsIdf.Keys) {
+                    //Console.WriteLine(word);
                     double bi = 0;
                     double ai = 0;
                     if (fileDict.ContainsKey(word)) bi = fileDict[word];
-                    if (userFileDict.ContainsKey(word)) ai = userFileDict[word]* Math.Log10((numOfDocs +1.0) / (allWordsIdf[word] +1.0));
-
-                    abSum+= bi*ai;
+                    if (userFileDict.ContainsKey(word)) ai = userFileDict[word]*allWordsIdf[word];
+                    //Console.WriteLine($"ai: {ai}, bi: {bi}");
+                    abSum += bi*ai;
                     aSquareSum+= ai*ai;
                     bSquareSum+= bi*bi;
                 }
