@@ -8,6 +8,7 @@ namespace AntiplagiatLib
 {
     internal class RabinKarp: TFIDF, IAntiplagiatMethod
     {
+        /*
         static public Dictionary<string, double> Calculate(string pathToFile, string pathToStandartFiles)
         {
             DirectoryInfo directoryInfo = new DirectoryInfo(pathToStandartFiles);
@@ -15,7 +16,7 @@ namespace AntiplagiatLib
 
             var similarityList = new Dictionary<string, double>();
 
-            string[] dirs = Directory.GetFiles(@"C:\Users\maxgu\OneDrive\Документы\RefDocs", "*.*", SearchOption.AllDirectories);
+            string[] dirs = Directory.GetFiles(@"C:\Users\maxgu\OneDrive\Документы\RefDocs", "*.txt", SearchOption.AllDirectories);
 
             const int SentencesCount = 10;
 
@@ -36,7 +37,7 @@ namespace AntiplagiatLib
                 Console.WriteLine();
             }
 
-
+            var text = 
             HashArray s_h = new HashArray(s);
             for (int i = 0; i < SentencesHashArr.GetLength(0); ++i)
             {
@@ -54,5 +55,6 @@ namespace AntiplagiatLib
                 }
             }
         }
+        */
     }
 }

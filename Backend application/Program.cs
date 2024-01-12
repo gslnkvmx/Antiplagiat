@@ -1,4 +1,5 @@
 ﻿using AntiplagiatLib;
+using System.Diagnostics.Metrics;
 
 namespace Backend_application
 {
@@ -55,7 +56,7 @@ namespace Backend_application
             }
             
 
-            CosineSimilarity.Calculate(
+            var result = CosineSimilarity.Calculate(
                 @"C:\Users\maxgu\OneDrive\Документы\UserDocs\Текст 5.txt",
                TFIDF.DirectoryPath);
         }

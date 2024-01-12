@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 
-namespace TestWPF
+namespace Frontend
 {
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
