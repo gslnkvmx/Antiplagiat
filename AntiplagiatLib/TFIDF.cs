@@ -251,8 +251,8 @@ namespace AntiplagiatLib
                     {
                         if(docDict.ContainsKey(word)) TfidfSum += docDict[word];
                     }
-                    if (!String.IsNullOrEmpty(sentence) && 
-                        !TfidfSentences.ContainsKey(sentence)) TfidfSentences.Add(sentence, TfidfSum / words.Length);
+                    if (!String.IsNullOrEmpty(strippedLine) && 
+                        !TfidfSentences.ContainsKey(strippedLine)) TfidfSentences.Add(strippedLine, TfidfSum / words.Length);
                 }
             }
             TfidfSentences = TfidfSentences.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
