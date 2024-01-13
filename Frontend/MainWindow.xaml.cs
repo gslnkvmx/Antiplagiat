@@ -1,5 +1,4 @@
 ﻿using Microsoft.Win32;
-using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Windows;
@@ -12,6 +11,19 @@ namespace Frontend
     /// </summary>
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        private string _path;
+        public string Path
+        {
+            get
+            {
+                return _path;
+            }
+            set
+            {
+                _path = value;
+                OnPropertyChanged();
+            }
+        }
         public MainWindow()
         {
             InitializeComponent();
@@ -75,7 +87,7 @@ namespace Frontend
             bool? filePicked = fileDialog.ShowDialog();
             if (filePicked == true)
             {
-                string path = fileDialog.FileName;
+                Path = fileDialog.FileName;
                 //textBox.TextForCheck = "Документ загружен: " + path;
                 //textBox.txtInput.IsEnabled = false;
             }
