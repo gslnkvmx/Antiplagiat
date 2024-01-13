@@ -5,7 +5,7 @@ namespace Backend_application
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
 
             TFIDF.UploadRefDocs(@"C:\Users\maxgu\OneDrive\Документы\RefDocs");
@@ -20,6 +20,11 @@ namespace Backend_application
                TFIDF.DirectoryPath);
 
             foreach (var res in result2)
+            {
+                Console.WriteLine(res.Key + $"-> {res.Value}");
+            }
+
+            foreach (var res in result)
             {
                 Console.WriteLine(res.Key + $"-> {res.Value}");
             }

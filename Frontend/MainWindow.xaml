@@ -28,13 +28,13 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
-                <Button x:Name="btnRollUp" Content="_" Width="30" Height="30" 
+                <Button x:Name="BtnRollUp" Content="_" Width="30" Height="30" 
                         Background="Transparent" BorderBrush="Transparent" 
-                        Click="btnRollUp_Click"/>
+                        Click="BtnRollUp_Click"/>
 
                 <Button x:Name="btnClose" Content="X" Width="30" Height="30" 
                         Background="Transparent" BorderBrush="Transparent" 
-                        Click="btnClose_Click"/>
+                        Click="BtnClose_Click"/>
             </StackPanel>
 
             <TextBlock Grid.Row="1" Margin="30 0 0 0" Text="Антиплагиат.рф" FontSize="32" Foreground="#564644"/>

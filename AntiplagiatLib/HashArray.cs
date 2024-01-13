@@ -9,7 +9,7 @@ namespace AntiplagiatLib
     public class HashArray : HashFunction
     {
         public List<int> h = new();
-        public string s {  get; set; }
+        public string S {  get; set; }
 
         public HashArray(string s)
         {
@@ -20,7 +20,7 @@ namespace AntiplagiatLib
                 // Console.WriteLine($"{mul(h[i - 1], P)} + {(int)s[i - 1] - 'a' + 1}");
                 // Console.WriteLine($"h{i} = {h[i]}");
             }
-            this.s = s;
+            this.S = s;
         }
 
         public int this[int index]

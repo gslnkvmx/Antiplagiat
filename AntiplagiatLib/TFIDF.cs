@@ -14,7 +14,7 @@ namespace AntiplagiatLib
                   "(?:[^а-яА-ЯёЁa-zA-Z0-9 ]|(?<=['\"])s)",
                   RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
-        public static Dictionary<string, double> readDict(string path)
+        public static Dictionary<string, double> ReadDict(string path)
         {
             Dictionary<string, double> docDict = new Dictionary<string, double>();
 
@@ -22,8 +22,7 @@ namespace AntiplagiatLib
             {
                 while (!reader.EndOfStream)
                 {
-                    string line = reader.ReadLine();
-                    string[] parts = line.Split(':');
+                    string[] parts = reader.ReadLine().Split(':');
 
                     if (parts.Length == 2 && !string.IsNullOrEmpty(parts[0]) && !string.IsNullOrEmpty(parts[1]))
                     {
@@ -54,7 +53,7 @@ namespace AntiplagiatLib
             foreach (FileInfo fileInfo in appDirectoryInfo.GetFiles("TFIDF_*.txt", SearchOption.AllDirectories))
             {
                 string docPath = fileInfo.FullName;
-                TFIDF.countTFIDF(docPath, idfList, numOfDocs);
+                TFIDF.CountTFIDF(docPath, idfList, numOfDocs);
             }
         }
         /// <summary>
@@ -183,7 +182,7 @@ namespace AntiplagiatLib
 
             string idfPath = Path.Combine(_directoryPath, "idfCoef.txt");
             var existingIdfDict = new Dictionary<string, double>();
-            if (Path.Exists(idfPath)) { existingIdfDict = readDict(idfPath); };
+            if (Path.Exists(idfPath)) { existingIdfDict = ReadDict(idfPath); };
 
             using (StreamWriter writer = new StreamWriter(idfPath, true))
             {
@@ -195,10 +194,10 @@ namespace AntiplagiatLib
             return idfList;
         }
 
-        public static void countTFIDF(string docPath)
+        public static void CountTFIDF(string docPath)
         {
             var idfList = TFIDF.FormIdfList(out int numOfDocs);
-            Dictionary<string, double> docDict = readDict(docPath);
+            Dictionary<string, double> docDict = ReadDict(docPath);
 
             using (StreamWriter writer = new StreamWriter(docPath, false))
             {
@@ -209,9 +208,9 @@ namespace AntiplagiatLib
             };
         }
 
-        public static void countTFIDF(string docPath, Dictionary<string, double> idfList, int numOfDocs)
+        public static void CountTFIDF(string docPath, Dictionary<string, double> idfList, int numOfDocs)
         {
-            Dictionary<string, double> docDict = readDict(docPath);
+            Dictionary<string, double> docDict = ReadDict(docPath);
    
             docDict = docDict.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
             using (StreamWriter writer = new StreamWriter(docPath, false))
@@ -229,7 +228,7 @@ namespace AntiplagiatLib
             string newFileName = "TFIDF_" + Path.GetFileName(fullPath);
             string newFilePath = Path.Combine(_directoryPath, newFileName);
 
-            Dictionary<string, double> docDict = readDict(newFilePath);
+            Dictionary<string, double> docDict = ReadDict(newFilePath);
             Dictionary<string, double> TfidfSentences = new Dictionary<string, double>();
 
             using (StreamReader reader = new StreamReader(docPath))

@@ -39,14 +39,14 @@ namespace TestWPF.View.UserControls
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("TextForCheck"));
             }
         }
-        private void btnClear_Click(object sender, RoutedEventArgs e)
+        private void BtnClear_Click(object sender, RoutedEventArgs e)
         {
             txtInput.Clear();
             txtInput.IsEnabled = true;
             txtInput.Focus();
         }
 
-        private void txtInput_TextChanged(object sender, TextChangedEventArgs e)
+        private void TxtInput_TextChanged(object sender, TextChangedEventArgs e)
         {
             if(string.IsNullOrEmpty(txtInput.Text))
                 tbPlaceholder.Visibility = Visibility.Visible;

@@ -10,7 +10,7 @@ namespace AntiplagiatLib
 {
     public class RabinKarp: TFIDF, IAntiplagiatMethod
     {
-        private static Regex clear = new Regex(
+        private static readonly Regex clear = new Regex(
                   "(?:[^а-яА-ЯёЁa-zA-Z0-9 ]|(?<=['\"])s)",
                   RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
         static public Dictionary<string, double> Calculate(string pathToFile, string pathToStandartFiles)
@@ -24,7 +24,7 @@ namespace AntiplagiatLib
 
             const int SentencesCount = 10;
 
-            Dictionary<string, double> SentencesTFIDF = new Dictionary<string, double>();
+            Dictionary<string, double> SentencesTFIDF;
             Dictionary<string, HashArray[]> refDocs = new Dictionary<string, HashArray[]>();
             for (int i = 0; i < dirs.Length; ++i)
             {
@@ -49,7 +49,6 @@ namespace AntiplagiatLib
             HashArray text_hash = new HashArray(text);
             foreach (var refDoc in refDocs) {
                 double found_count = 0.0;
-                double plagiatPr = 0.0;
                 for (int j = 0; j < SentencesCount; ++j)
                 {
                     if (refDoc.Value[j] is null) continue;

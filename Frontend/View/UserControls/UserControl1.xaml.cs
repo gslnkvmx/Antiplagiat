@@ -13,16 +13,9 @@ namespace Frontend.View.UserControls
     /// Логика взаимодействия для UserControl1.xaml
     /// </summary>
 
+    
     public partial class ChartViewModel : UserControl
     {
-        private string _path;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        private void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
 
         private static int Menu()
         {
@@ -75,7 +68,7 @@ namespace Frontend.View.UserControls
                 {
                     Console.WriteLine("Введённый вами путь неккоректен, повторите попытку");
                 }
-                catch (Exception e)
+                catch
                 {
                     Console.WriteLine("Произошла непредвиденная ошибка, повторите попытку");
                 }
@@ -85,7 +78,7 @@ namespace Frontend.View.UserControls
 
             switch (Menu())
             {
-                case 1:
+                case (int)NameOfMethods.CosineSimilarity:
                     {
                         TFIDF.UploadRefDocs(pathToStandartFiles);
                         result = CosineSimilarity.Calculate(
@@ -94,7 +87,7 @@ namespace Frontend.View.UserControls
                         break;
                     }
 
-                case 2:
+                case (int)NameOfMethods.FindKeySentences:
                     {
                         TFIDF.UploadRefDocs(pathToStandartFiles);
                         result = RabinKarp.Calculate(
