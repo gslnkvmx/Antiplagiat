@@ -50,7 +50,7 @@ namespace AntiplagiatLib
 
             if (TextHashArray is null) return pos;
 
-            if (h[this.Length() - 1] == TextHashArray[TextHashArray.Length() - 1])
+            if (h[this.Length() - 1] == TextHashArray[this.Length() - 1])
             {
                 pos.Add(0);
             }

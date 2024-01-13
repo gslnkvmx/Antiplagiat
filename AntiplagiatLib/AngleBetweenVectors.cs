@@ -13,7 +13,7 @@ namespace AntiplagiatLib
         /// </summary>
         /// <param name="pathToFile">Путь до файла с текстом пользователя</param>
         /// <param name="pathToStandartFiles">Путь до папки, где лежат эталонные документы</param>
-        public static void Calculate(string pathToFile, string pathToStandartFiles)
+        public static Dictionary<string,double> Calculate(string pathToFile, string pathToStandartFiles)
         {
             // словарь в котором будет слово - количество данного слова в тексте пользователя
             Dictionary<string, int> countOfWordsInPersonFile = TFIDF.GetWords(pathToFile);
@@ -126,7 +126,8 @@ namespace AntiplagiatLib
                 finalResults.Add(filesName[i], angle);
             }
 
-            ShowResults(finalResults);
+            //ShowResults(finalResults);
+            return finalResults;
         }
 
         public static void ShowResults(Dictionary<string, double> finalResults)

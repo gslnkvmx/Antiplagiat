@@ -12,7 +12,7 @@ namespace Frontend
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
         private string _path;
-        public string Path
+        public string UserPath
         {
             get
             {
@@ -87,7 +87,7 @@ namespace Frontend
             bool? filePicked = fileDialog.ShowDialog();
             if (filePicked == true)
             {
-                Path = fileDialog.FileName;
+                UserPath = fileDialog.FileName;
                 //textBox.TextForCheck = "Документ загружен: " + path;
                 //textBox.txtInput.IsEnabled = false;
             }

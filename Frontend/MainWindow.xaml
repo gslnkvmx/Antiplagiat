@@ -15,13 +15,11 @@
         FontFamily="/View/Fonts/#IBM Plex Sans SemiBold"
         >
 
-    <Border Background="#F5F5F5" CornerRadius="8">
+    <Border Background="White" CornerRadius="8">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="30"/>
-                <RowDefinition Height="20*"/>
-                <RowDefinition Height="60*"/>
-                <RowDefinition Height="20*"/>
+                <RowDefinition Height="100*"/>
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
@@ -48,60 +46,7 @@
                        Text="{Binding ResultProcent, UpdateSourceTrigger=PropertyChanged}" FontSize="62" 
                        HorizontalAlignment="Right" Margin="0,10,58,5"/>
 
-            <userControls:ChartViewModel x:Name="" Grid.Row="2" Grid.ColumnSpan="2"></userControls:ChartViewModel>
-
-            <StackPanel Grid.Row="3" HorizontalAlignment="Left" Orientation="Horizontal" Margin="30 20 0 30" Width="360">
-                <Button x:Name="DownloadFile" Width="150" BorderThickness="0" Background="#D9D9D9" Click="DownloadFile_Click">
-                    <Button.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius" Value="5"/>
-                        </Style>
-                    </Button.Resources>
-                    <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" Width="140">
-                        <Viewbox Stretch="Fill" Height="40" Width="40" Margin="5">
-                            <Grid HorizontalAlignment="Center" Height="24">
-                                <Path Data="M12 7L12 14M12 14L15 11M12 14L9 11" Stroke="#564644" StrokeStartLineCap="Round" StrokeThickness="1.5" StrokeEndLineCap="round" StrokeLineJoin="round"/>
-                                <Path Data="M16 17H12H8" Stroke="#564644" StrokeThickness="1.5" StrokeEndLineCap="round" StrokeStartLineCap="Round"/>
-                                <Path Opacity="0.5" Data="M2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C22 4.92893 22 7.28595 22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12Z" Stroke="#564644" StrokeThickness="1.5"/>
-                            </Grid>
-                        </Viewbox>
-                        <TextBlock FontSize="13" VerticalAlignment="Center" Margin="10" Foreground="#564644">Загрузить<LineBreak/>Документ</TextBlock>
-                    </StackPanel>
-                </Button>
-
-                <Button  Width="180" BorderThickness="0" Background="#D9D9D9" Margin="20 0 0 0">
-                    <Button.Resources>
-                        <Style TargetType="Border">
-                            <Setter Property="CornerRadius" Value="5"/>
-                        </Style>
-                    </Button.Resources>
-                    <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" Width="160">
-                        <Viewbox Stretch="Fill" Height="40" Width="40" Margin="5">
-                            <Grid HorizontalAlignment="Center" Height="37">
-                                <Path Data="M26.7674 11.8536L27.5236 11.0975C28.7763 9.8447 30.8076 9.8447 32.0604 11.0975C33.3132 12.3503 33.3132 14.3815 32.0604 15.6343L31.3043 16.3905M26.7674 11.8536C26.7674 11.8536 26.862 13.4604 28.2797 14.8782C29.6975 16.2959 31.3043 16.3905 31.3043 16.3905M26.7674 11.8536L19.8159 18.8051C19.345 19.276 19.1095 19.5114 18.9071 19.771C18.6684 20.0772 18.4636 20.4086 18.2965 20.7591C18.1549 21.0563 18.0495 21.372 17.839 22.0038L17.1649 24.0263L16.9467 24.6806M31.3043 16.3905L24.3528 23.342C23.8819 23.8129 23.6465 24.0483 23.3869 24.2508C23.0806 24.4895 22.7493 24.6943 22.3988 24.8613C22.1015 25.003 21.7858 25.1084 21.1541 25.3188L19.1316 25.993L18.4773 26.2111M16.9467 24.6806L16.7286 25.335C16.625 25.6458 16.7059 25.9886 16.9376 26.2203C17.1693 26.452 17.5121 26.5329 17.8229 26.4293L18.4773 26.2111M16.9467 24.6806L18.4773 26.2111" Stroke="#564644" StrokeThickness="3"/>
-                                <Path Data="M10.1579 19.9473H14.2368" Stroke="#564644" StrokeThickness="3" StrokeStartLineCap="round" StrokeEndLineCap="round"/>
-                                <Path Data="M10.1579 13.4211H20.7631" Stroke="#564644" StrokeThickness="3" StrokeStartLineCap="round" StrokeEndLineCap="round"/>
-                                <Path Data="M10.1579 26.4737H12.6053" Stroke="#564644" StrokeThickness="3" StrokeStartLineCap="round" StrokeEndLineCap="round"/>
-                                <Path Opacity="0.5" Data="M2 15.0526C2 8.89955 2 5.82303 3.91151 3.91151C5.82303 2 8.89955 2 15.0526 2H18.3158C24.4688 2 27.5454 2 29.4568 3.91151C31.3684 5.82303 31.3684 8.89955 31.3684 15.0526V21.5789C31.3684 27.7319 31.3684 30.8086 29.4568 32.72C27.5454 34.6315 24.4688 34.6315 18.3158 34.6315H15.0526C8.89955 34.6315 5.82303 34.6315 3.91151 32.72C2 30.8086 2 27.7319 2 21.5789V15.0526Z" Stroke="#564644" StrokeThickness="3"/>
-                            </Grid>
-                        </Viewbox>
-                        <TextBlock FontSize="13" VerticalAlignment="Center" Margin="10" Foreground="#564644">Сформировать<LineBreak/>Отчет</TextBlock>
-                    </StackPanel>
-                </Button>
-
-            </StackPanel>
-
-            <Button x:Name="Check" Grid.Column="1" Grid.Row="3" Height="50" Width="190" HorizontalAlignment="Right" 
-                    Margin="0 20 30 30" BorderThickness="0"
-                    Background="#564644"
-                    Content="ПРОВЕРИТЬ" FontSize="20" Foreground="#F5F5F5"
-                    Click="Check_Click">
-                <Button.Resources>
-                    <Style TargetType="Border">
-                        <Setter Property="CornerRadius" Value="5"/>
-                    </Style>
-                </Button.Resources>
-            </Button>
+            <userControls:ChartViewModel Grid.Row="2" Grid.ColumnSpan="2"></userControls:ChartViewModel>
 
         </Grid>
     </Border>
