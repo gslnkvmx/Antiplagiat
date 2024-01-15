@@ -22,7 +22,7 @@ namespace AntiplagiatLib
 
             string[] dirs = Directory.GetFiles(@"C:\Users\maxgu\OneDrive\Документы\RefDocs", "*.txt", SearchOption.AllDirectories);
 
-            const int SentencesCount = 5;
+            const int SentencesCount = 10;
 
             Dictionary<string, double> SentencesTFIDF;
             Dictionary<string, List<string>> refDocs = new Dictionary<string, List<string>>();
