@@ -11,18 +11,11 @@ namespace Backend_application
             TFIDF.UploadRefDocs(@"C:\Users\maxgu\OneDrive\Документы\RefDocs");
 
 
-            var result = CosineSimilarity.Calculate(
+            var result = CountAhoCorasik.Calculate(
                 @"C:\Users\maxgu\OneDrive\Документы\UserDocs\Текст 1.txt",
-               TFIDF.DirectoryPath);
+               @"C:\Users\maxgu\OneDrive\Документы\RefDocs");
 
-            var result2 = RabinKarp.Calculate(
-                @"C:\Users\maxgu\OneDrive\Документы\UserDocs\Текст 1.txt",
-               TFIDF.DirectoryPath);
 
-            foreach (var res in result2)
-            {
-                Console.WriteLine(res.Key + $"-> {res.Value}");
-            }
 
             foreach (var res in result)
             {
